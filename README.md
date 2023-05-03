@@ -1,6 +1,6 @@
-# Movies-Library - 01
+# Movies-Library - 02
 
-**Author Name**: Hadeel lafi
+**Author Name**: Hadeel Nafez lafi
 
 ## WRRC
 
@@ -14,17 +14,21 @@ The Movies-Library app aims to allows users to check the latest movies based on 
 
 To run this app on your own machine, you can follow these steps:
 
-Clone the repository to your local machine and then open it.
+1. Clone the repository to your local machine and then open it.
 
-npm init -y
+2. npm init -y
 
-Install npm install express
+3. Install reqired pakeges :
 
-Start the server by running npm start
+- npm install express cors dotnev axios npm
+- npm install -g nodemon
+
+4. Start the server by running  nodemon server
 
 ## Project Features
 
 The app has the following features:
 
-Displays a list of movies from a JSON file and
-handles some errors that the user may face.
+- Displays a list of movies from a JSON file.
+- View various pages for movies such as Trending, Popular, Search, and View the Genres of movies.
+- Handles some errors that the user may face.
