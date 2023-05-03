@@ -1,45 +1,156 @@
 const data = require("./Movie Data/data.json")
 
-const express = require("express");
+const express = require('express');
+const cors = require('cors');
+const server = express();
+require('dotenv').config();
 
-const server = express();//best practise call it server or app
-
+server.use(cors());
 const PORT = 3000;
+const axios = require('axios');
 
-function Movie(movie_data) {
-    this.title = movie_data.title;
-    this.poster_path = movie_data.poster_path;
-    this.overview = movie_data.overview;
-}
+const apiKey = process.env.APIkey;
+
 //Routes
 
 // Home Route
 //https://localhost:3000/
-server.get('/', (req, res) => {
-    let movie1=new Movie(data);
-    res.send(movie1);//will be shown in localhost:3000
-})
+server.get('/', homeHandler);//will be shown in localhost:3000
 
 //https://localhost:3000/favorite
-server.get('/favorite',(req,res)=>{
+server.get('/favorite', favoriteHandler);
+
+
+////////lab14
+server.get('/trending', trendinghandler);
+server.get('/search', searchHandler);
+server.get('/genre', genreHandler);
+server.get('/popular', popularHandler);
+
+
+server.get('*', notFoundHandler);
+
+
+function homeHandler(req, res) {
+    let movie1 = new Movie(data.id, data.title, data.release_date, data.poster_path, data.overview);
+    res.send(movie1);
+}
+
+function favoriteHandler(req, res) {
     //const x = y + 1; //here if we want to show error 500 we have to create an error cause  it's server error
     res.send("Welcome to Favorite Page");
-})
+}
 
-server.get('*',(req,res)=>{
-    const notFoundError={status: 404,responseText: "page not found error"};
+function notFoundHandler(req, res) {
+    const notFoundError = { status: 404, responseText: "page not found error" };
     res.status(404).send(notFoundError);
-});
+}
+/////lab14 functions
 
-server.use(function(err, req, res, next) {
-    //console.error(err.stack);// this will show what is the error in console 
-    const serverError={status: 500,responseText: "Sorry, something went wrong"};
-    res.status(500).send(serverError);
-  });
+function trendinghandler(req, res) {
+    const url = `https://api.themoviedb.org/3/trending/all/week?api_key=${apiKey}&language=en-US`;
+    try {
+        axios.get(url)
+            .then(result => {
+                let mapResult = result.data.results.map(item => {
+                    let singleTrandmovie = new Movie(item.id, item.title, item.release_date, item.poster_path, item.overview);
+                    return (singleTrandmovie);
+                })
+                res.send(mapResult);
+            })
+            .catch((error) => {
+                console.log('sorry you have something error', error)
+                res.status(500).send(error);
+            })
+    }
+    catch (error) {
+        errorHandler(error, req, res)
+    }
+}
 
-  
+function searchHandler(req, res) {
+    const url = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&language=en-US&query=The&page=2`;
+    try {
+        axios.get(url)
+            .then(result => {
+                let mapResult = result.data.results.map(item => {
+                    let singleTrandmovie = new Movie(item.id, item.title, item.release_date, item.poster_path, item.overview);
+                    return (singleTrandmovie);
+                })
+                res.send(mapResult);
+            })
+            .catch((error) => {
+                console.log('sorry you have something error', error)
+                res.status(500).send(error);
+            })
+    }
+    catch (error) {
+        errorHandler(error, req, res)
+    }
+
+}
+function genreHandler(req, res) {
+    const url = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US `;
+    try {
+        axios.get(url)
+            .then(result => {
+                let mapResult = result.data.genres.map(item => {
+                    let singleGenre = new Genre(item.id, item.name);
+                    return (singleGenre);
+                })
+                res.send(mapResult);
+            })
+            .catch((error) => {
+                console.log('sorry you have something error', error)
+                res.status(500).send(error);
+            })
+    }
+    catch (error) {
+        errorHandler(error, req, res)
+    }
+}
+function popularHandler(req, res) {
+    const url = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=en-US&page=1 `;
+    try {
+        axios.get(url)
+            .then(result => {
+                let mapResult = result.data.results.map(item => {
+                    let singlePopulermovie = new Movie(item.id, item.title, item.release_date, item.poster_path, item.overview);
+                    return (singlePopulermovie);
+                })
+                res.send(mapResult);
+            })
+            .catch((error) => {
+                console.log('sorry you have something error', error)
+                res.status(500).send(error);
+            })
+    }
+    catch (error) {
+        errorHandler(error, req, res)
+    }
+}
+
+function errorHandler(error, req, res) {
+    const err = {
+        status: 500,
+        responseText: "Sorry, something went wrong"
+    }
+    res.status(500).send(err);
+}
+
+function Movie(id, title, release_date, poster_path, overview) {
+    this.id = id;
+    this.title = title;
+    this.release_date = release_date;
+    this.poster_path = poster_path;
+    this.overview = overview;
+}
+function Genre(id, name) {
+    this.id = id;
+    this.name = name;
+}
 server.listen(PORT, () => {
-    console.log(`listening on ${PORT} i  am ready`)
+    console.log(`listening on ${PORT} i am ready`)
 })
 
 
