@@ -11,6 +11,12 @@ const axios = require('axios');
 
 const apiKey = process.env.APIkey;
 
+////lab15
+server.use(express.json())
+
+const pg = require('pg');
+const client = new pg.Client(process.env.DATABASE_URL);
+
 //Routes
 
 // Home Route
@@ -26,6 +32,31 @@ server.get('/trending', trendinghandler);
 server.get('/search', searchHandler);
 server.get('/genre', genreHandler);
 server.get('/popular', popularHandler);
+////lab15
+server.get('/getMovies', getMoviesHandler);
+server.post('/getMovies', addMovieHandler);
+function getMoviesHandler(req, res) {
+    const sql = `SELECT * FROM ownMovies`;
+    client.query(sql)
+        .then(data => {
+            res.send(data.rows)
+        })
+        .catch(error => errorHandler(error, req, res))
+}
+function addMovieHandler(req, res) {
+    const movie = req.body;
+    console.log(movie);
+    const sql = `INSERT INTO ownMovies (title, release_date, poster_path, overview)
+    VALUES ($1, $2, $3, $4);`
+    const values = [movie.title, movie.release_date, movie.poster_path, movie.overview]; 
+    client.query(sql, values)
+    .then(data=>{
+        res.send("The data has been added successfully");
+    })
+    .catch((error)=>{
+        errorHandler(error,req,res)
+    })
+}
 
 
 server.get('*', notFoundHandler);
@@ -149,9 +180,13 @@ function Genre(id, name) {
     this.id = id;
     this.name = name;
 }
-server.listen(PORT, () => {
-    console.log(`listening on ${PORT} i am ready`)
-})
+client.connect()
+    .then(() => {
+        server.listen(PORT, () => {
+            console.log(`listening on ${PORT} i am ready`)
+        })
+    })
+
 
 
 

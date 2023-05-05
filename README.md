@@ -1,4 +1,4 @@
-# Movies-Library - 02
+# Movies-Library - 03
 
 **Author Name**: Hadeel Nafez lafi
 
@@ -20,10 +20,15 @@ To run this app on your own machine, you can follow these steps:
 
 3. Install reqired pakeges :
 
-- npm install express cors dotnev axios npm
-- npm install -g nodemon
+- npm i
 
 4. Start the server by running  nodemon server
+
+5.Creat database called "movies"
+
+note dont forget to run :
+psql -d movies -f schema.sql
+
 
 ## Project Features
 
@@ -31,4 +36,5 @@ The app has the following features:
 
 - Displays a list of movies from a JSON file.
 - View various pages for movies such as Trending, Popular, Search, and View the Genres of movies.
+- Add movies & display them
 - Handles some errors that the user may face.
