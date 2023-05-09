@@ -38,3 +38,6 @@ The app has the following features:
 - View various pages for movies such as Trending, Popular, Search, and View the Genres of movies.
 - Add movies & display them
 - Handles some errors that the user may face.
+- Update movie comments for a specific movie in the database using a /UPDATE/id request.
+- Remove a specific movie from the database using a /DELETE/id request.
+- Get a specific movie from the database using a getMovie/id request.
